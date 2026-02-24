@@ -1,0 +1,65 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=297mm, paperheight=210mm, margin=0mm]{geometry}
+\usepackage{tikz}
+\usepackage{helvet}
+\usepackage{xcolor}
+
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty} 
+
+% Colors
+\definecolor{plannerbrown}{RGB}{180, 160, 140}
+\definecolor{gridcolor}{RGB}{230, 225, 220}
+
+\begin{document}
+
+\begin{tikzpicture}[remember picture, overlay, shift={(current page.south west)}]
+    
+    % 1. BACKGROUND GRID (0.5cm steps)
+    \draw[gridcolor, thin, step=0.5cm] (0,0) grid (29.7, 21.0);
+
+    % 2. HEADER
+    \node[anchor=west, font=\large\bfseries, text=plannerbrown] 
+        at (0.5, 20.15) {Date: \rule{6cm}{0.5pt}};
+
+    % 3. SIDEBAR (7 blocks wide)
+    % Shifted top down to 19.0 to match the new grid height
+    \draw[plannerbrown, thick] (0.5, 0.5) rectangle (4.0, 19.0);
+    \node[anchor=north west, font=\small\bfseries, text=plannerbrown] at (0.6, 18.95) {Focus};
+
+    % 4. DAY OF THE WEEK ROW (0.5cm height)
+    % X: 4.5 to 29.0 | Y: 18.5 to 19.0
+    \draw[plannerbrown, thick] (4.5, 18.5) rectangle (29.0, 19.0);
+    
+    \foreach \col/\dayName in {0/Mon, 1/Tue, 2/Wed, 3/Thu, 4/Fri, 5/Sat, 6/Sun} {
+        \pgfmathsetmacro{\posX}{4.5 + \col*3.5 + 1.75} % Centered in the 3.5cm column
+        \node[anchor=center, font=\tiny\bfseries, text=plannerbrown] 
+            at (\posX, 18.75) {\dayName};
+        
+        % Vertical dividers for the Day Row
+        \ifnum\col<7
+            \pgfmathsetmacro{\divX}{4.5 + \col*3.5}
+            \draw[plannerbrown, thin] (\divX, 18.5) -- (\divX, 19.0);
+        \fi
+    }
+
+    % 5. MAIN MONTHLY GRID (6 Rows)
+    % Starts at 18.5. Ends at 0.5.
+    % Width: 24.5cm (3.5cm per col). Height: 18.0cm (3.0cm per row).
+    \draw[plannerbrown, thick] (4.5, 0.5) rectangle (29.0, 18.5);
+
+    % COLUMN DIVIDERS
+    \foreach \x in {1,2,...,6} {
+        \pgfmathsetmacro{\divX}{4.5 + \x*3.5}
+        \draw[plannerbrown, thin] (\divX, 0.5) -- (\divX, 18.5);
+    }
+
+    % ROW DIVIDERS (6 rows of 3.0cm)
+    \foreach \y in {1,2,...,5} {
+        \pgfmathsetmacro{\divY}{18.5 - \y*3.0}
+        \draw[plannerbrown, thin] (4.5, \divY) -- (29.0, \divY);
+    }
+
+\end{tikzpicture}
+
+\end{document}

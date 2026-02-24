@@ -1,0 +1,74 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=297mm, paperheight=210mm, margin=0mm]{geometry}
+\usepackage{tikz}
+\usepackage{helvet}
+\usepackage{xcolor}
+
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty} 
+
+% Colors
+\definecolor{plannerbrown}{RGB}{180, 160, 140}
+\definecolor{gridcolor}{RGB}{230, 225, 220}
+
+\begin{document}
+
+\begin{tikzpicture}[remember picture, overlay, shift={(current page.south west)}]
+    
+    % 1. BACKGROUND GRID (0.5cm steps)
+    \draw[gridcolor, thin, step=0.5cm] (0,0) grid (29.7, 21.0);
+
+    % 2. HEADER
+    \node[anchor=west, font=\large\bfseries, text=plannerbrown] 
+        at (0.5, 20.15) {Week of: \rule{6cm}{0.5pt}};
+
+    % 3. SIDEBAR (7 blocks wide / 3.5cm)
+    % Snaps from 0.5 to 4.0
+    \draw[plannerbrown, thick] (0.5, 0.5) rectangle (4.0, 19.5);
+    \node[anchor=north west, font=\small\bfseries, text=plannerbrown] at (0.6, 19.45) {Notes};
+
+    % 4. MAIN WEEKLY BOUNDARY (7 Days)
+    % Starts at 4.5 (1 block after sidebar). 
+    % Ends at 29.0 (leaving 0.5cm / 1 block margin on right)
+    % 24.5cm total / 7 = 3.5cm exactly per day.
+    \draw[plannerbrown, thick] (4.5, 0.5) rectangle (29.0, 19.5);
+
+    % 5. 7 DAILY COLUMNS
+    \foreach \x/\dayName in {0/Mon, 1/Tue, 2/Wed, 3/Thu, 4/Fri, 5/Sat, 6/Sun} {
+        
+        % Calculate X based on 3.5cm width (7 grid blocks)
+        \pgfmathsetmacro{\posX}{4.5 + \x*3.5}
+        \pgfmathsetmacro{\posXText}{\posX + 0.1}
+        \pgfmathsetmacro{\posXHour}{\posX + 0.45}
+        \pgfmathsetmacro{\posXLineStart}{\posX + 0.5}
+        \pgfmathsetmacro{\posXLineEnd}{\posX + 3.5}
+        
+        % Day Label
+        \node[anchor=north west, font=\small\bfseries, text=plannerbrown] 
+            at (\posXText, 19.40) {\dayName};
+
+        % 6. TIME SLOTS (6 AM to 11 PM)
+        \foreach \h [count=\i] in {6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11} {
+            \pgfmathsetmacro{\yLine}{18.5 - (\i-1)*1.0}
+            
+            % Hour Label
+            \node[anchor=east, font=\tiny, text=plannerbrown!90] at (\posXHour, \yLine) {\h};
+            
+            % Hourly Line (Solid)
+            \draw[plannerbrown, opacity=0.4] (\posXLineStart, \yLine) -- (\posXLineEnd, \yLine);
+            
+            % Half-hour Line (Faint)
+            \pgfmathsetmacro{\yHalf}{\yLine - 0.5}
+            \draw[plannerbrown, opacity=0.15] (\posXLineStart, \yHalf) -- (\posXLineEnd, \yHalf);
+        }
+    }
+
+    % 7. VERTICAL DAY DIVIDERS (Snapped to 3.5cm increments)
+    \foreach \x in {1,2,3,4,5,6} {
+        \pgfmathsetmacro{\divX}{4.5 + \x*3.5}
+        \draw[plannerbrown, thin, dashed] (\divX, 0.5) -- (\divX, 19.5);
+    }
+
+\end{tikzpicture}
+
+\end{document}
