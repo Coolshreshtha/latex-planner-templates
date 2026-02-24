@@ -1,0 +1,1 @@
+Planner Templates for undated daily, 6 week and weekly planner. Optimised for printing on A4 size sheet or tablet. 
